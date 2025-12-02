@@ -22,6 +22,7 @@ import AdminStudents from './pages/Admin/AdminStudents';
 import AdminCourses from './pages/Admin/AdminCourses';
 import AdminEnrollments from './pages/Admin/AdminEnrollments';
 import AdminSettings from './pages/Admin/AdminSettings';
+import StudentReport from './pages/StudentReport';
 
 
 function Layout() {
@@ -70,6 +71,7 @@ function Layout() {
 
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/courses" element={<Courses />} />
+          <Route path="/parent/student-report" element={<ProtectedRoute requireParent={true}><StudentReport /></ProtectedRoute>} />
           <Route path="/admin/dashboard" element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/students" element={<ProtectedRoute requireAdmin={true}><AdminStudents /></ProtectedRoute>} />
           <Route path="/admin/courses" element={<ProtectedRoute requireAdmin={true}><AdminCourses /></ProtectedRoute>} />

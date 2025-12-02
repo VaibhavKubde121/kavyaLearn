@@ -33,6 +33,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const aiTutorRoutes = require('./routes/aiTutorRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const featureFlagRoutes = require('./routes/featureFlagRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 // Mount routes
 app.use('/api/auth', authRoutes);
@@ -47,6 +48,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/ai', aiTutorRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/flags', featureFlagRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Welcome route
 app.get("/", (req, res) => {
