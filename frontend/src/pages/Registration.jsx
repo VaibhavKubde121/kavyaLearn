@@ -50,12 +50,18 @@ function Registration() {
         return;
       }
 
-      // Store token and user info
+      // Store token and user info (use same keys as login)
       localStorage.setItem("token", data.user.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("role", data.user.role);
+      // keep a consistent key used by ProtectedRoute
+      localStorage.setItem("userRole", data.user.role);
 
-      navigate("/dashboard");
+      // Redirect based on role
+      if (data.user.role === 'admin' || data.user.role === 'sub-admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError("Connection error. Please try again.");
       setLoading(false);

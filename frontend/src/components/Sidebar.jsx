@@ -46,6 +46,9 @@ function Sidebar({ isOpen, setIsOpen }) {
       { path: "/admin/courses", label: "Manage Courses", icon: <FiBookOpen /> },
       { path: "/admin/settings", label: "Admin Settings", icon: <TbReportAnalytics /> },
     ] : []),
+    ...(userRole === 'parent' ? [
+      { path: "/parent/student-report", label: "Student Report", icon: <TbReportAnalytics /> },
+    ] : []),
     {
       path: "/subscription",
       label: "Subscriptions",
