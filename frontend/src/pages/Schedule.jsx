@@ -294,33 +294,6 @@ function Schedule() {
     new Date().toISOString().slice(0, 10)
   );
  
-  const todaySchedule = [
-    {
-      time: "09:00 AM",
-      title: "Morning Study Session",
-      bgColor: "#EDF2F7",
-      textColor: "#4a5568",
-    },
-    {
-      time: "11:00 AM",
-      title: "Data Structures Lecture",
-      bgColor: "#2B6CB0",
-      textColor: "#ffffff",
-    },
-    {
-      time: "02:00 PM",
-      title: "AI Tutor Session",
-      bgColor: "#38B2AC",
-      textColor: "#ffffff",
-    },
-    {
-      time: "04:00 PM",
-      title: "Group Project Meeting",
-      bgColor: "#48BB78",
-      textColor: "#ffffff",
-    },
-  ];
- 
   const [currentDate, setCurrentDate] = useState(() => new Date());
 
   // Weekly summary values (set to zero as requested)
@@ -635,47 +608,6 @@ function Schedule() {
  
           {/* Side Panel */}
           <div className="col-lg-4">
-            <div className="schedule-card p-4 mb-4">
-              <h5
-                style={{
-                  fontSize: "1.125rem",
-                  fontWeight: "600",
-                  marginBottom: "16px",
-                }}
-              >
-                Today's Schedule — {new Date().toLocaleDateString()}
-              </h5>
-
-              {todaySchedule.map((event, idx) => (
-                <div
-                  key={idx}
-                  className="mb-3 d-flex align-items-center"
-                  style={{ gap: "12px" }}
-                >
-                  <div
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "#64748b",
-                      minWidth: "72px",
-                      textAlign: "right",
-                    }}
-                  >
-                    {event.time}
-                  </div>
-
-                  <div
-                    className="today-event flex-grow-1"
-                    style={{
-                      backgroundColor: event.bgColor,
-                      color: event.textColor,
-                    }}
-                  >
-                    {event.title}
-                  </div>
-                </div>
-              ))}
-            </div>
-
             {/* Weekly Summary */}
             <div className="schedule-card p-4 mb-4">
               <h5
