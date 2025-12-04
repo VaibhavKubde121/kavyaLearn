@@ -18,14 +18,14 @@ async function seedQuizData() {
     console.log('📦 MongoDB Connected');
 
     // Clear existing test data
-    await User.deleteMany({ email: { $regex: /^test.*@quiz\.test$/ } });
+    await User.deleteMany({ email: { $regex: /^test.*@example\.com$/ } });
     await Enrollment.deleteMany({ studentId: { $exists: true } });
     console.log('🗑️  Cleared previous test data');
 
     // Create test instructor
     const instructor = await User.create({
       fullName: 'Quiz Instructor',
-      email: 'instructor@quiz.test',
+      email: 'instructor@example.com',
       password: 'password123',
       userType: 'instructor',
       phone: '9999999999'
@@ -113,21 +113,21 @@ async function seedQuizData() {
     const students = await User.insertMany([
       {
         fullName: 'Locked Quiz Student',
-        email: 'locked@quiz.test',
+        email: 'locked@example.com',
         password: 'password123',
         userType: 'student',
         phone: '8888888880'
       },
       {
         fullName: 'Unlocked Quiz Student',
-        email: 'unlocked@quiz.test',
+        email: 'unlocked@example.com',
         password: 'password123',
         userType: 'student',
         phone: '8888888881'
       },
       {
         fullName: 'Completed Quiz Student',
-        email: 'completed@quiz.test',
+        email: 'completed@example.com',
         password: 'password123',
         userType: 'student',
         phone: '8888888882'
@@ -190,17 +190,17 @@ async function seedQuizData() {
     console.log(`Quiz: ${quiz._id} (${quiz.title})`);
     console.log('');
     console.log('🔒 LOCKED STUDENT:');
-    console.log(`  Email: locked@quiz.test | Pass: password123`);
+    console.log(`  Email: locked@example.com | Pass: password123`);
     console.log(`  Course Progress: 50%`);
     console.log(`  Status: Quiz is LOCKED`);
     console.log('');
     console.log('🔓 UNLOCKED (NOT TAKEN) STUDENT:');
-    console.log(`  Email: unlocked@quiz.test | Pass: password123`);
+    console.log(`  Email: unlocked@example.com | Pass: password123`);
     console.log(`  Course Progress: 100%`);
     console.log(`  Status: Quiz is UNLOCKED, ready to take`);
     console.log('');
     console.log('✅ COMPLETED QUIZ STUDENT:');
-    console.log(`  Email: completed@quiz.test | Pass: password123`);
+    console.log(`  Email: completed@example.com | Pass: password123`);
     console.log(`  Course Progress: 100%`);
     console.log(`  Quiz Score: 75/100 (75%) - PASSED`);
     console.log('');
@@ -209,9 +209,9 @@ async function seedQuizData() {
     console.log('🧪 Testing Instructions:');
     console.log('1. Start backend: npm start');
     console.log('2. Start frontend: npm run dev');
-    console.log('3. Login as locked@quiz.test → Quiz should show locked state');
-    console.log('4. Login as unlocked@quiz.test → Quiz should be available to take');
-    console.log('5. Login as completed@quiz.test → Quiz should show previous marks');
+    console.log('3. Login as locked@example.com → Quiz should show locked state');
+    console.log('4. Login as unlocked@example.com → Quiz should be available to take');
+    console.log('5. Login as completed@example.com → Quiz should show previous marks');
     console.log('');
     console.log('✅ Test data seeded successfully!');
 
