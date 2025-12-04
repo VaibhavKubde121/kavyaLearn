@@ -189,23 +189,39 @@ exports.submitQuiz = async (req, res) => {
 exports.checkQuizLockStatus = async (req, res) => {
     try {
         const { courseId } = req.params;
-        const studentId = req.user._id;
+        const studentId = req.user?._id;
 
-        // Get enrollment record
-        const enrollment = await Enrollment.findOne({
-            studentId,
-            courseId
-        });
-
-        if (!enrollment) {
-            return res.status(404).json({ message: 'Student not enrolled in this course' });
-        }
-
-        // Get quiz for the course
+        // Get quiz for the course first
         const quiz = await Quiz.findOne({ course: courseId });
 
         if (!quiz) {
             return res.status(404).json({ message: 'No quiz found for this course' });
+        }
+
+        // Try to get enrollment record (might not exist in demo mode)
+        let enrollment = null;
+        if (studentId) {
+            enrollment = await Enrollment.findOne({
+                studentId,
+                courseId
+            });
+        }
+
+        // If enrollment doesn't exist, allow quiz in demo mode (coursePerformance = 100)
+        if (!enrollment) {
+            // Demo mode: unlock quiz automatically
+            return res.json({
+                quizId: quiz._id,
+                isLocked: false,
+                isUnlocked: true,
+                coursePerformance: 100,
+                requiredPerformance: 100,
+                quizTaken: false,
+                marks: 0,
+                percentage: 0,
+                status: null,
+                demoMode: true
+            });
         }
 
         // Quiz is unlocked only if course performance is 100%
@@ -235,7 +251,7 @@ exports.submitAndStoreQuiz = async (req, res) => {
     try {
         const { quizId } = req.params;
         const { answers } = req.body; // [{questionIndex, selectedOption}, ...]
-        const studentId = req.user._id;
+        const studentId = req.user?._id;
 
         const quiz = await Quiz.findById(quizId).populate('course');
 
@@ -243,23 +259,27 @@ exports.submitAndStoreQuiz = async (req, res) => {
             return res.status(404).json({ message: 'Quiz not found' });
         }
 
-        // Get enrollment
-        const enrollment = await Enrollment.findOne({
-            studentId,
-            courseId: quiz.course._id
-        });
-
-        if (!enrollment) {
-            return res.status(403).json({ message: 'Not enrolled in this course' });
+        // Get enrollment (if exists)
+        let enrollment = null;
+        if (studentId) {
+            enrollment = await Enrollment.findOne({
+                studentId,
+                courseId: quiz.course._id
+            });
         }
 
-        // Check if quiz is unlocked (coursePerformance >= 100%)
-        if (enrollment.coursePerformance < 100) {
-            return res.status(403).json({
-                message: 'Quiz is locked. Complete all course lessons first.',
-                requiredPerformance: 100,
-                currentPerformance: enrollment.coursePerformance
-            });
+        // In demo mode (no enrollment), allow quiz submission but skip DB storage
+        const isDemo = !enrollment;
+
+        if (!isDemo) {
+            // Check if quiz is unlocked (coursePerformance >= 100%)
+            if (enrollment.coursePerformance < 100) {
+                return res.status(403).json({
+                    message: 'Quiz is locked. Complete all course lessons first.',
+                    requiredPerformance: 100,
+                    currentPerformance: enrollment.coursePerformance
+                });
+            }
         }
 
         // Grade the quiz
@@ -292,18 +312,20 @@ exports.submitAndStoreQuiz = async (req, res) => {
         const percentage = totalMarks ? Math.round((score / totalMarks) * 100) : 0;
         const passed = percentage >= (quiz.passingPercentage || 60);
 
-        // Store marks in Enrollment model
-        enrollment.quizMarks = score;
-        enrollment.quizPercentage = percentage;
-        enrollment.quizTaken = true;
-        enrollment.quizAttempts.push({
-            quizId: quizId,
-            marks: score,
-            percentage: percentage,
-            status: passed ? 'passed' : 'failed'
-        });
+        // Store marks in Enrollment model (skip in demo mode)
+        if (!isDemo && enrollment) {
+            enrollment.quizMarks = score;
+            enrollment.quizPercentage = percentage;
+            enrollment.quizTaken = true;
+            enrollment.quizAttempts.push({
+                quizId: quizId,
+                marks: score,
+                percentage: percentage,
+                status: passed ? 'passed' : 'failed'
+            });
 
-        await enrollment.save();
+            await enrollment.save();
+        }
 
         res.json({
             success: true,

@@ -1427,8 +1427,8 @@ export default function Courses() {
 
   // Quiz Handlers
   const startQuizHandler = (quiz) => {
-    // Use a placeholder courseId for the demo
-    const courseId = quiz.courseId || quiz.id || 'demo-course-001';
+    // Use the real course ID that has a quiz in the database
+    const courseId = quiz.courseId || quiz.id || '693122030225284c998ff8dd';
     console.log('[Quiz Debug] Starting quiz:', { quiz, courseId });
     setSelectedCourseForQuiz(courseId);
     setShowQuizModal(true);
