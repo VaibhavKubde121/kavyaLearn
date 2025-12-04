@@ -17,17 +17,24 @@ const QuizModal = ({ courseId, onClose, onSuccess }) => {
 
   const fetchQuizStatus = async () => {
     try {
+      console.log('[QuizModal] Fetching quiz status for courseId:', courseId);
       const response = await api.get(`/quiz/course/${courseId}/lock-status`);
+      console.log('[QuizModal] Quiz status response:', response.data);
       setQuizStatus(response.data);
       
       if (response.data.isUnlocked && !response.data.quizTaken) {
         // Fetch quiz questions
+        console.log('[QuizModal] Fetching quiz questions for quizId:', response.data.quizId);
         const quizResponse = await api.get(`/quiz/${response.data.quizId}`);
+        console.log('[QuizModal] Quiz questions received:', quizResponse.data);
         setQuiz(quizResponse.data);
       }
     } catch (error) {
-      console.error('Error fetching quiz status:', error);
-      setQuizStatus({ error: error.response?.data?.message || 'Error loading quiz' });
+      console.error('[QuizModal] Error fetching quiz status:', error.response?.data || error.message);
+      setQuizStatus({ 
+        error: error.response?.data?.message || 'Error loading quiz',
+        isError: true 
+      });
     } finally {
       setLoading(false);
     }
@@ -83,9 +90,54 @@ const QuizModal = ({ courseId, onClose, onSuccess }) => {
         <div className="quiz-modal quiz-locked">
           <button className="quiz-close" onClick={onClose}>✕</button>
           <div className="quiz-locked-content">
-            <div className="lock-icon">
-              <i className="bi bi-lock-fill" style={{ fontSize: '48px', color: '#e53e3e' }}></i>
+            <div style={{ fontSize: '48px', marginBottom: 16 }}>🔒</div>
+            <h2>Quiz Locked</h2>
+            <p>Complete all course lessons to unlock this quiz.</p>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill"
+                style={{ width: `${quizStatus.coursePerformance}%` }}
+              />
             </div>
+            <p className="progress-text">
+              Course Progress: {quizStatus.coursePerformance}% / {quizStatus.requiredPerformance}%
+            </p>
+            <button className="btn btn-secondary" onClick={onClose}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (quizStatus && quizStatus.isError) {
+    return (
+      <div className="quiz-modal-overlay">
+        <div className="quiz-modal quiz-locked">
+          <button className="quiz-close" onClick={onClose}>✕</button>
+          <div className="quiz-locked-content" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '48px', marginBottom: 16 }}>⚠️</div>
+            <h2>Error</h2>
+            <p>{quizStatus.error || 'Failed to load quiz'}</p>
+            <button className="btn btn-secondary" onClick={onClose}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Quiz is locked
+  if (quizStatus && quizStatus.isLocked) {
+    return (
+      <div className="quiz-modal-overlay">
+        <div className="quiz-modal quiz-locked">
+          <button className="quiz-close" onClick={onClose}>✕</button>
+          <div className="quiz-locked-content">
+            <div style={{ fontSize: '48px', marginBottom: 16 }}>🔒</div>
             <h2>Quiz Locked</h2>
             <p>Complete all course lessons to unlock this quiz.</p>
             <div className="progress-bar">

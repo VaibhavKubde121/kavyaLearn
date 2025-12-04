@@ -1427,8 +1427,10 @@ export default function Courses() {
 
   // Quiz Handlers
   const startQuizHandler = (quiz) => {
-    // Open the new QuizModal instead of the old QuizInterface
-    setSelectedCourseForQuiz(quiz.courseId || quiz.id);
+    // Use a placeholder courseId for the demo
+    const courseId = quiz.courseId || quiz.id || 'demo-course-001';
+    console.log('[Quiz Debug] Starting quiz:', { quiz, courseId });
+    setSelectedCourseForQuiz(courseId);
     setShowQuizModal(true);
   };
 
@@ -2330,14 +2332,14 @@ export default function Courses() {
           <QuizModal
             courseId={selectedCourseForQuiz}
             onClose={() => {
+              console.log('[Quiz Debug] Closing quiz modal');
               setShowQuizModal(false);
               setSelectedCourseForQuiz(null);
             }}
             onSuccess={(result) => {
-              console.log('Quiz submitted successfully:', result);
+              console.log('[Quiz Debug] Quiz submitted successfully:', result);
               setShowQuizModal(false);
               setSelectedCourseForQuiz(null);
-              // Refresh quizzes list or update UI as needed
             }}
           />
         )}
