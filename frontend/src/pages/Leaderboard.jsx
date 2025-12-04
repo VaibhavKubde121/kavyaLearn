@@ -32,6 +32,7 @@ export default function Leaderboard() {
   const [achievementsHover, setAchievementsHover] = useState(false);
   const [challengeHover, setChallengeHover] = useState(false);
   const [motivationHover, setMotivationHover] = useState(false);
+  const [error, setError] = useState(null);
 
   const interactiveStyle = {
     transition: "all 0.3s ease-in-out",
@@ -57,20 +58,18 @@ export default function Leaderboard() {
   useEffect(() => {
     async function loadLeaderboard() {
       setLoading(true);
+      setError(null);
       try {
-        const res = await fetch('/api/achievements/leaderboard', {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/achievements/leaderboard?limit=50', {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: localStorage.getItem('token')
-              ? `Bearer ${localStorage.getItem('token')}`
-              : undefined,
+            ...(token && { Authorization: `Bearer ${token}` }),
           },
         });
 
         if (!res.ok) {
-          console.warn('Failed to fetch leaderboard');
-          setLoading(false);
-          return;
+          throw new Error(`Failed to fetch leaderboard: ${res.statusText}`);
         }
 
         const data = await res.json();
@@ -79,11 +78,12 @@ export default function Leaderboard() {
         setMyRank(data.myRank || null);
       } catch (err) {
         console.error('Error loading leaderboard', err);
+        setError(err.message || 'Failed to load leaderboard');
       }
       setLoading(false);
     }
     loadLeaderboard();
-  }, []);
+  }, [activeTab]);
 
   const renderLeaderboardContent = () => {
     const streakAchievement = achievements.find(
