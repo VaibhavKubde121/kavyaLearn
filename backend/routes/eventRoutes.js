@@ -7,8 +7,7 @@ const {
     getUpcomingEvents,
     enrollInEvent,
     updateEvent,
-    deleteEvent,
-    setReminder
+    deleteEvent
 } = require('../controllers/eventController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -18,7 +17,6 @@ router.route('/')
 
 router.get('/my-events', protect, getMyEvents);
 router.get('/upcoming', protect, getUpcomingEvents);
-router.post('/reminder', protect, setReminder); // ✅ Add reminder endpoint
 router.post('/:id/enroll', protect, enrollInEvent);
 
 router.route('/:id')
