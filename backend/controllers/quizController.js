@@ -1,6 +1,10 @@
 const Quiz = require('../models/quizModel');
 const Course = require('../models/courseModel');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+const Enrollment = require('../models/enrollmentModel');
+>>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
 =======
 const Enrollment = require('../models/enrollmentModel');
 >>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
@@ -186,7 +190,10 @@ exports.submitQuiz = async (req, res) => {
     }
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
 
 // @desc    Check if quiz is locked for a student
 // @route   GET /api/quiz/course/:courseId/lock-status
@@ -345,4 +352,7 @@ exports.submitAndStoreQuiz = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+<<<<<<< HEAD
+>>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
+=======
 >>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896

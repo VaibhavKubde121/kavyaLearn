@@ -1,12 +1,15 @@
 const Event = require('../models/eventModel');
 const asyncHandler = require('express-async-handler');
 <<<<<<< HEAD
+<<<<<<< HEAD
 // SendGrid for sending emails (API key should be set in .env as SENDGRID_API_KEY)
 const sgMail = require('@sendgrid/mail');
 
 if (process.env.SENDGRID_API_KEY) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
+=======
+>>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
 =======
 >>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
 
@@ -166,6 +169,7 @@ const deleteEvent = asyncHandler(async (req, res) => {
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // @desc    Set reminder for upcoming event
 // @route   POST /api/events/reminder
 // @access  Private
@@ -228,6 +232,8 @@ const setReminder = asyncHandler(async (req, res) => {
 
 =======
 >>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
+=======
+>>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
 module.exports = {
     createEvent,
     getEvents,
@@ -236,8 +242,12 @@ module.exports = {
     enrollInEvent,
     updateEvent,
 <<<<<<< HEAD
+<<<<<<< HEAD
     deleteEvent,
     setReminder
+=======
+    deleteEvent
+>>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
 =======
     deleteEvent
 >>>>>>> 19dc9f140fa0fd2e9caea30caaaf5389cd158896
