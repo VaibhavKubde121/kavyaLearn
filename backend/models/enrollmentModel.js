@@ -9,7 +9,21 @@ const enrollmentSchema = new mongoose.Schema({
   watchHours: { type: Number, default: 0 },
   lastAccessed: { type: Date },
   grade: { type: String },
-  feedback: { type: String }
+  feedback: { type: String },
+  enrollmentStatus: { 
+    type: String, 
+    enum: ['pending', 'active', 'completed'], 
+    default: 'pending' 
+  },
+  paymentId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Payment',
+    default: null 
+  },
+  certificateDownloadedAt: { 
+    type: Date,
+    default: null 
+  }
 }, { timestamps: true });
 
 enrollmentSchema.index({ studentId: 1, courseId: 1 }, { unique: true });

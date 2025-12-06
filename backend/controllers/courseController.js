@@ -240,3 +240,74 @@ exports.reviewCourse = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+// @desc    Download course certificate
+// @route   GET /api/courses/:id/certificate
+// @access  Private/Student
+exports.downloadCertificate = async (req, res) => {
+    try {
+        const Enrollment = require('../models/enrollmentModel');
+        const courseId = req.params.id;
+
+        // Verify course exists
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        // Check if user is enrolled
+        const enrollment = await Enrollment.findOne({
+            studentId: req.user._id,
+            courseId: courseId,
+            enrollmentStatus: 'active'
+        });
+
+        if (!enrollment) {
+            return res.status(403).json({ message: 'You must be enrolled in this course to download certificate' });
+        }
+
+        // Check if course is 100% completed
+        if (enrollment.progressPercentage < 100) {
+            return res.status(400).json({ 
+                message: 'Course not completed. Completion required: 100%',
+                currentProgress: enrollment.progressPercentage
+            });
+        }
+
+        // Generate certificate data (could be enhanced with PDF generation)
+        const certificateData = {
+            id: `CERT-${enrollment._id}`,
+            studentName: req.user.fullName || req.user.firstName + ' ' + req.user.lastName,
+            courseName: course.title,
+            instructorName: course.instructor ? (course.instructor.fullName || course.instructor.firstName + ' ' + course.instructor.lastName) : 'Instructor',
+            completionDate: enrollment.updatedAt || new Date(),
+            completionPercentage: enrollment.progressPercentage,
+            courseId: course._id,
+            enrollmentId: enrollment._id
+        };
+
+        // Mark certificate as downloaded if not already done
+        if (!enrollment.certificateDownloadedAt) {
+            enrollment.certificateDownloadedAt = new Date();
+            await enrollment.save();
+
+            // Also update user record
+            const user = await User.findById(req.user._id);
+            const courseEnrollment = user.enrolledCourses.find(ec => ec.course.toString() === courseId);
+            if (courseEnrollment) {
+                courseEnrollment.certificateDownloadedAt = new Date();
+                await user.save();
+            }
+        }
+
+        res.json({
+            message: 'Certificate ready for download',
+            certificate: certificateData,
+            // In production, you could generate a PDF here using libraries like pdfkit or html2pdf
+            // For now, return the certificate data as JSON
+            downloadUrl: `/api/courses/${courseId}/certificate/pdf` // Can be implemented later
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

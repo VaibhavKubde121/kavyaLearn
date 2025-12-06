@@ -6,7 +6,8 @@ const {
     updateCourse,
     deleteCourse,
     enrollCourse,
-    reviewCourse
+    reviewCourse,
+    downloadCertificate
 } = require('../controllers/courseController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -23,5 +24,6 @@ router.route('/:id')
 
 router.post('/:id/enroll', protect, enrollCourse);
 router.post('/:id/reviews', protect, reviewCourse);
+router.get('/:id/certificate', protect, downloadCertificate);
 
 module.exports = router;

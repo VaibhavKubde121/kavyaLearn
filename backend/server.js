@@ -1,5 +1,6 @@
 // server.js
 const express = require("express");
+// Touch: update timestamp to force nodemon restart when routes/controllers change
 const dotenv = require("dotenv");
 const path = require("path");
 const cors = require("cors");
@@ -15,9 +16,28 @@ connectDB();
 // Initialize express
 const app = express();
 
+
+
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+// CORS configuration - allow frontend origin and handle credentials
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+// Handle preflight requests by invoking CORS middleware for OPTIONS
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return cors(corsOptions)(req, res, next);
+  }
+  next();
+});
+
 app.use(morgan('dev')); // HTTP request logger
 
 // Routes
@@ -34,6 +54,10 @@ const aiTutorRoutes = require('./routes/aiTutorRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const featureFlagRoutes = require('./routes/featureFlagRoutes');
 const progressRoutes = require('./routes/progressRoutes');
+const instructorRoutes = require('./routes/instructorRoutes');
+const studentRoutesFile = require('./routes/studentRoutes');
+const enrollmentRoutes = require('./routes/enrollmentRoutes');
+const parentRoutes = require('./routes/parentRoutes');
 
 // Mount routes
 app.use('/api/auth', authRoutes);
@@ -49,6 +73,10 @@ app.use('/api/ai', aiTutorRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/flags', featureFlagRoutes);
 app.use('/api/progress', progressRoutes);
+app.use('/api/instructor', instructorRoutes);
+app.use('/api/student', studentRoutesFile);
+app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api/parents', parentRoutes);
 
 // Welcome route
 app.get("/", (req, res) => {
